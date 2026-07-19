@@ -1,0 +1,11 @@
+{
+  "title": "MixHub - Community Mixes",
+  "description": "Discover mixes from DJs worldwide. Upload your own, go live, and earn from your content.",
+  "videos": [
+    { "id": "v1", "title": "Deep House Sunset Mix", "dj": "DJ Wizzy", "duration": "1:20:15", "views": "120K", "src": "/videos/sample1.mp4", "thumb": "/images/thumb1.svg", "genre": "House" },
+    { "id": "v2", "title": "Late Night Tech House", "dj": "Luna", "duration": "58:12", "views": "84K", "src": "/videos/sample2.mp4", "thumb": "/images/thumb2.svg", "genre": "Tech House" },
+    { "id": "v3", "title": "Hip-Hop Essentials", "dj": "MC Flow", "duration": "45:03", "views": "56K", "src": "/videos/sample3.mp4", "thumb": "/images/thumb3.svg", "genre": "Hip-Hop" },
+    { "id": "v4", "title": "Trap Bangers Vol.1", "dj": "808 King", "duration": "35:20", "views": "98K", "src": "/videos/sample4.mp4", "thumb": "/images/thumb4.svg", "genre": "Trap" },
+    { "id": "v5", "title": "Chillout Lounge", "dj": "Nocturne", "duration": "1:02:10", "views": "34K", "src": "/videos/sample5.mp4", "thumb": "/images/thumb5.svg", "genre": "Chill" }
+  ]
+}

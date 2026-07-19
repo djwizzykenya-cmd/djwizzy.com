@@ -1,0 +1,17 @@
+{
+  "title": "DJ Academy",
+  "description": "Learn DJing, production, and industry tips from experienced professionals.",
+  "courses": [
+    { "id": "c1", "title": "Beatmatching 101", "level": "Beginner", "length": "2h", "instructor": "DJ Wizzy", "price": "Free" },
+    { "id": "c2", "title": "EQ Mastery", "level": "Intermediate", "length": "3h", "instructor": "Luna", "price": "$19" },
+    { "id": "c3", "title": "Mixing Hip-Hop", "level": "Intermediate", "length": "2.5h", "instructor": "MC Flow", "price": "$15" },
+    { "id": "c4", "title": "Scratching Techniques", "level": "Advanced", "length": "4h", "instructor": "Scratch Pro", "price": "$29" },
+    { "id": "c5", "title": "Production Basics", "level": "Beginner", "length": "3h", "instructor": "Nocturne", "price": "$12" },
+    { "id": "c6", "title": "Getting Booked", "level": "All", "length": "1.5h", "instructor": "Agent K", "price": "$9" }
+  ],
+  "events": [
+    { "id": "e1", "name": "Live DJ Session #1", "date": "2026-07-15", "type": "Live" },
+    { "id": "e2", "name": "Production Masterclass", "date": "2026-07-22", "type": "Workshop" },
+    { "id": "e3", "name": "Club Night Showcase", "date": "2026-08-05", "type": "Performance" }
+  ]
+}

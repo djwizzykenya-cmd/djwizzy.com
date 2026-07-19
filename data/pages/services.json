@@ -1,0 +1,21 @@
+{
+  "title": "My Services",
+  "description": "From live DJ sets to custom mixes and more. Let's create something amazing together.",
+  "cards": [
+    { "title": "Live DJing", "desc": "Book me for weddings, parties, clubs, and corporate events.", "price": "$500+", "href": "/services/live-djing", "buttonText": "Learn" },
+    { "title": "Custom Mixing", "desc": "Get a personalized mix tailored to your event or mood.", "price": "$100+", "href": "/services/custom-mixing", "buttonText": "Learn" },
+    { "title": "Website Creation", "desc": "I build professional DJ websites for other creators.", "price": "$500+", "href": "/services/website-creation", "buttonText": "Learn" },
+    { "title": "Training & Consultation", "desc": "Learn DJing techniques and industry tips from me.", "price": "$200+", "href": "/services/training-consultation", "buttonText": "Learn" },
+    { "title": "Music Production", "desc": "Get original tracks and remixes created for you.", "price": "$300+", "href": "/services/music-production", "buttonText": "Learn" },
+    { "title": "Event Planning", "desc": "Let me plan the perfect music experience for your event.", "price": "Quote", "href": "/services/event-planning", "buttonText": "Book" }
+  ],
+  "contactTitle": "Ready to Book?",
+  "contactDescription": "Tell me about your event and I'll get back to you with a custom quote.",
+  "contactFields": [
+    { "type": "text", "placeholder": "Your Name" },
+    { "type": "email", "placeholder": "Your Email" },
+    { "type": "text", "placeholder": "Event Date & Type" },
+    { "type": "textarea", "placeholder": "Tell me about your event..." }
+  ],
+  "contactButtonText": "Send Booking Request"
+}

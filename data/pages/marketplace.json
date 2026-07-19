@@ -1,0 +1,17 @@
+{
+  "title": "Marketplace",
+  "description": "Buy, rent, and explore premium DJ gear, software, and essentials.",
+  "saleTitle": "For Sale",
+  "rentTitle": "For Rent",
+  "noRentText": "No items available for rent right now.",
+  "items": [
+    { "name": "CDJ-3000", "price": "$3,500", "type": "Equipment", "rent": true, "description": "Professional performance media player." },
+    { "name": "Pioneer DDJ-1000", "price": "$899", "type": "Controller", "rent": false, "description": "Club-standard DJ controller with jog wheels." },
+    { "name": "Technics 1200", "price": "$1,200", "type": "Turntable", "rent": true, "description": "Iconic analog turntable for vinyl performances." },
+    { "name": "Audio Interface", "price": "$199", "type": "Hardware", "rent": false, "description": "Studio-grade recording interface for DJs and producers." },
+    { "name": "Headphones Pro", "price": "$299", "type": "Accessories", "rent": false, "description": "Noise-isolating headphones built for monitoring and mixing." },
+    { "name": "Mixer SVM-7000", "price": "$2,500", "type": "Equipment", "rent": true, "description": "Advanced DJ mixer with effects and performance pads." },
+    { "name": "Speaker System", "price": "$5,000", "type": "Equipment", "rent": true, "description": "Full-range speaker package for event sound." },
+    { "name": "Microphone Bundle", "price": "$149", "type": "Accessories", "rent": false, "description": "Wireless microphone package for emcees and performers." }
+  ]
+}

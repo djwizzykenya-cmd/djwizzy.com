@@ -1,0 +1,19 @@
+{
+  "title": "About Me & Portfolio",
+  "description": "Learn about my journey as a DJ, past events, and what makes me stand out in the industry.",
+  "bioHeading": "My Story",
+  "bioText": [
+    "I'm a passionate DJ with over 10 years of experience in the industry. Starting from small clubs to major festivals, I've developed a unique style that blends electronic, hip-hop, and house music.",
+    "My mission is to create unforgettable experiences through music and help other DJs succeed in their careers."
+  ],
+  "heroImage": "/images/about-hero.jpg",
+  "portfolioTitle": "Past Events & Gallery",
+  "portfolioItems": [
+    { "title": "Festival Takeover", "subtitle": "Main stage headline set", "rating": "5.0/5", "link": "/events/festival" },
+    { "title": "Club Residency", "subtitle": "Weekly late night club sessions", "rating": "4.9/5", "link": "/events/club" },
+    { "title": "Studio Session", "subtitle": "Exclusive production behind-the-scenes", "rating": "5.0/5", "link": "/events/studio" },
+    { "title": "International Tour", "subtitle": "Sold-out show highlights", "rating": "4.8/5", "link": "/events/tour" },
+    { "title": "VIP Experience", "subtitle": "Private event and VIP lounge", "rating": "4.9/5", "link": "/events/vip" },
+    { "title": "Collab Release", "subtitle": "Featured artist collabs and drops", "rating": "5.0/5", "link": "/events/collab" }
+  ]
+}

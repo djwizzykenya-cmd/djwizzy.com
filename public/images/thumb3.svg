@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="100%" height="100%" fill="#001529" />
+  <g fill="#06b6d4">
+    <path d="M120 180 C180 80, 460 80, 520 180 L520 220 C460 320, 180 320, 120 220 Z" />
+  </g>
+  <text x="50%" y="50%" fill="#fff" font-size="22" text-anchor="middle" dominant-baseline="middle">Thumbnail 3</text>
+</svg>

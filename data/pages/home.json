@@ -1,0 +1,57 @@
+{
+  "title": "DJ Wizzy - Your All-in-One DJ Ecosystem",
+  "subtitle": "Find your perfect mix curated by DJ Wizzy - the #1 most subscribed DJ on the platform with millions of listeners worldwide.",
+  "cta": [
+    { "text": "🎵 Watch on MixHub", "href": "/mixhub" },
+    { "text": "📥 Download Mixes", "href": "/mixes" }
+  ],
+  "stats": [
+    { "stat": "2M+", "label": "YouTube Subscribers" },
+    { "stat": "500+", "label": "Mixes Released" },
+    { "stat": "50M+", "label": "Total Plays" },
+    { "stat": "15+", "label": "Years in the Game" }
+  ],
+  "mixes": [
+    {
+      "title": "Tech House Vibes Mix Vol 5",
+      "artist": "DJ Wizzy",
+      "duration": "1h 23m",
+      "date": "2 weeks ago",
+      "actions": ["Play mix", "Watch on YouTube", "Listen on SoundCloud", "Download mix"]
+    },
+    {
+      "title": "Afrobeats vs Amapiano Mix Vol 4",
+      "artist": "DJ Wizzy",
+      "duration": "58m",
+      "date": "3 weeks ago",
+      "actions": ["Play mix", "Watch on YouTube", "Listen on SoundCloud", "Download mix"]
+    },
+    {
+      "title": "Deep House Sessions Mix",
+      "artist": "DJ Wizzy",
+      "duration": "1h 45m",
+      "date": "1 month ago",
+      "actions": ["Play mix", "Watch on YouTube", "Listen on Mixcloud", "Download mix"]
+    }
+  ],
+  "featured": {
+    "title": "All I Do is I Win 🏆",
+    "description": "Experience the latest exclusive content from DJ Wizzy's performances, studio sessions, and behind-the-scenes moments.",
+    "links": [
+      { "text": "📺 YouTube", "href": "#" },
+      { "text": "📱 Instagram", "href": "#" }
+    ]
+  },
+  "videos": [
+    { "title": "Tech House Mix - Live Session", "date": "2 weeks ago" },
+    { "title": "Afrobeats Festival Takeover", "date": "3 weeks ago" },
+    { "title": "Deep House Studio Session", "date": "1 month ago" },
+    { "title": "DJ Wizzy Weekly Mix #45", "date": "1 month ago" }
+  ],
+  "events": [
+    { "date": "JUN 19", "event": "Summer Festival 2024", "location": "New York, USA", "time": "10:00 pm" },
+    { "date": "JUL 4", "event": "Independence Day Party", "location": "Los Angeles, USA", "time": "9:00 pm" },
+    { "date": "JUL 15", "event": "Beach Club Takeover", "location": "Miami, USA", "time": "11:00 pm" },
+    { "date": "AUG 2", "event": "Grand Festival Finale", "location": "Chicago, USA", "time": "10:00 pm" }
+  ]
+}
