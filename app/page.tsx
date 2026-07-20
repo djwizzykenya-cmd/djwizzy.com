@@ -79,18 +79,18 @@ export default function Home() {
       {/* HERO SECTION - Large DJ Name */}
       <section className="min-h-screen flex flex-col items-center justify-center px-4 bg-black relative overflow-hidden">
         {/* Background decoration */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-20 hidden sm:block">
           <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-10 w-72 h-72 bg-pink-600 rounded-full blur-3xl"></div>
         </div>
 
-        <div className="relative z-10 text-center max-w-6xl mx-auto">
+        <div className="relative z-10 text-center max-w-6xl mx-auto px-2">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-8xl md:text-9xl font-black mb-4 leading-none tracking-tighter" style={{ fontFamily: 'var(--font-caveat)' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-3 sm:mb-4 leading-none tracking-tighter" style={{ fontFamily: 'var(--font-caveat)' }}>
               <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
                 DJ WIZZY
               </span>
@@ -101,7 +101,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl md:text-5xl font-bold text-gray-300 mb-8"
+            className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-gray-300 mb-4 sm:mb-8"
           >
             {page.title}
           </motion.h2>
@@ -110,7 +110,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed"
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed"
           >
             {page.subtitle}
           </motion.p>
@@ -119,13 +119,13 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-wrap gap-6 justify-center"
+            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-6 justify-center"
           >
             {(page.cta || []).map((item: any, index: number) => (
               <Link
                 key={index}
                 href={item.href}
-                className="px-8 py-4 bg-purple-600 hover:bg-purple-700 font-bold text-lg rounded-lg transition"
+                className="px-4 sm:px-8 py-3 sm:py-4 bg-purple-600 hover:bg-purple-700 font-bold text-sm sm:text-base md:text-lg rounded-lg transition w-full sm:w-auto text-center"
               >
                 {item.text}
               </Link>

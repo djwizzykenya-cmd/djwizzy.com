@@ -219,3 +219,105 @@ body::after {
   }
 }
 
+/* Mobile-First Responsive Styles */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Prevent horizontal scrolling on all devices */
+* {
+  box-sizing: border-box;
+}
+
+/* Mobile text scaling */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+  
+  body {
+    font-size: 14px;
+  }
+  
+  /* Ensure large headings scale down on mobile */
+  h1 {
+    font-size: clamp(1.5rem, 8vw, 3rem);
+    line-height: 1.2;
+  }
+  
+  h2 {
+    font-size: clamp(1.25rem, 6vw, 2rem);
+    line-height: 1.3;
+  }
+  
+  h3 {
+    font-size: clamp(1rem, 5vw, 1.5rem);
+    line-height: 1.4;
+  }
+  
+  p, li {
+    font-size: clamp(0.875rem, 4vw, 1rem);
+    line-height: 1.6;
+  }
+  
+  /* Ensure padding/margin don't cause overflow */
+  main,
+  section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Buttons scale responsively */
+  button, a[class*="btn"], a[class*="button"] {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tablet optimization */
+  main,
+  section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .max-w-7xl {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Prevent layout shift from scrollbar */
+@media (max-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+
+/* Ensure fixed elements don't cause overflow */
+nav,
+header {
+  overflow-x: hidden;
+}
+
+/* Mobile-friendly image sizing */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Prevent video overflow */
+video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+

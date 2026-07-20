@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
@@ -25,6 +25,14 @@ export const metadata: Metadata = {
   title: "DJ Wizzy - Your All-in-One DJ Ecosystem",
   description: "Experience DJ Wizzy's mixes, services, and community. Mix, share, and monetize your DJ content.",
 };
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 
 export default function RootLayout({
   children,

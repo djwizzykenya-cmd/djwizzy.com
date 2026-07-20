@@ -83,15 +83,15 @@ export default function Services() {
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">{page.description}</p>
       </motion.section>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-12 sm:mb-20 px-4">
         {(page.cards || []).map((service: any, i: number) => (
           <motion.div
             key={i}
             whileHover={{ y: -10 }}
-            className="p-6 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
+            className="p-4 sm:p-6 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
           >
-            <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-            <p className="text-gray-300 mb-4">{service.desc}</p>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">{service.title}</h3>
+            <p className="text-sm sm:text-base text-gray-300 mb-4">{service.desc}</p>
             <div className="flex items-center justify-between">
               <span className="text-purple-400 font-bold">{service.price}</span>
               {service.href ? (
