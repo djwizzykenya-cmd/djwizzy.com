@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#160b2a"/>
+      <stop offset=".55" stop-color="#4c1d95"/>
+      <stop offset="1" stop-color="#831843"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1200v675H0z"/>
+  <circle cx="600" cy="315" r="168" stroke="#f5d0fe" stroke-opacity=".7" stroke-width="7"/>
+  <circle cx="600" cy="315" r="116" stroke="#e879f9" stroke-opacity=".55" stroke-width="4"/>
+  <circle cx="600" cy="315" r="62" fill="#f5d0fe" fill-opacity=".16" stroke="#f5d0fe" stroke-opacity=".8" stroke-width="4"/>
+  <path fill="#fff" d="m575 267 80 48-80 48z"/>
+  <text x="600" y="570" fill="#fff" font-family="Arial,sans-serif" font-size="48" font-weight="700" letter-spacing="10" text-anchor="middle">DJ WIZZY</text>
+</svg>

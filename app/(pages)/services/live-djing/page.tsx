@@ -51,7 +51,7 @@ export default function LiveDj() {
           </details>
           <details className="bg-black/40 p-3 rounded">
             <summary className="font-medium">What is your travel policy?</summary>
-            <p className="mt-2 text-sm">Travel expenses for events outside the local area may apply — we'll include this in the quote.</p>
+            <p className="mt-2 text-sm">Travel expenses for events outside the local area may apply — we&apos;ll include this in the quote.</p>
           </details>
         </div>
       </section>

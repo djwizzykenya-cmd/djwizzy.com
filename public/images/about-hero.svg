@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" fill="none">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#170b2b"/>
+      <stop offset=".55" stop-color="#3d125b"/>
+      <stop offset="1" stop-color="#090510"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="600" y1="80" x2="600" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f0abfc" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#c026d3" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1200v800H0z"/>
+  <circle cx="600" cy="310" r="260" stroke="#e879f9" stroke-opacity=".22" stroke-width="2"/>
+  <circle cx="600" cy="310" r="205" stroke="#c084fc" stroke-opacity=".28" stroke-width="3"/>
+  <circle cx="600" cy="310" r="142" stroke="#f0abfc" stroke-opacity=".34" stroke-width="2"/>
+  <path fill="url(#beam)" d="M520 90h160l220 610H300z" opacity=".4"/>
+  <path stroke="#f5d0fe" stroke-linecap="round" stroke-width="12" d="M150 620h40l22-65 30 130 34-190 38 125 35-70 30 34h40m67-4h28l20-48 25 95 31-140 35 97 27-49 29 44h30m69-2h39l24-72 30 119 35-174 32 124 32-62 31 65h40"/>
+  <path fill="#f5d0fe" fill-opacity=".9" d="M0 734h1200v66H0z"/>
+  <path fill="#c026d3" d="M0 734h1200v8H0z"/>
+  <text x="600" y="700" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="700" letter-spacing="14" text-anchor="middle">DJ WIZZY</text>
+</svg>

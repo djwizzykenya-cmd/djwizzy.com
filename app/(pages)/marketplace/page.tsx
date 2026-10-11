@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 type MarketplaceItem = {
+  id?: string;
   name: string;
   price: string;
   type: string;
   rent: boolean;
   description?: string;
+  images?: string[];
 };
 
 type MarketplaceContent = {
@@ -20,17 +22,43 @@ type MarketplaceContent = {
   items?: MarketplaceItem[];
 };
 
+function createInquiryHref(item: MarketplaceItem, intent: 'buy' | 'rent') {
+  const action = intent === 'buy' ? 'buying' : 'renting';
+  const subject = `${intent === 'buy' ? 'Purchase' : 'Rental'} inquiry: ${item.name}`;
+  const body = [
+    `Hello, I am interested in ${action} this item.`,
+    '',
+    `Item: ${item.name}`,
+    `Price: ${item.price}`,
+    `Category: ${item.type}`,
+    ...(item.description ? [`Description: ${item.description}`] : []),
+  ].join('\n');
+
+  return `mailto:contact@djplatform.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 export default function Marketplace() {
   const [content, setContent] = useState<MarketplaceContent | null>(null);
+  const [products, setProducts] = useState<MarketplaceItem[] | null>(null);
+  const [productError, setProductError] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/page?slug=marketplace')
       .then((r) => (r.ok ? r.json().then((j) => setContent(j)) : null))
       .catch(() => {});
+    fetch('/api/products', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Could not load marketplace products.');
+        setProducts(await response.json() as MarketplaceItem[]);
+      })
+      .catch((error: unknown) => {
+        setProducts([]);
+        setProductError(error instanceof Error ? error.message : 'Could not load marketplace products.');
+      });
   }, []);
 
   const items: MarketplaceItem[] =
-    content?.items || [
+    products ?? content?.items ?? [
       { name: 'CDJ-3000', price: '$3,500', type: 'Equipment', rent: true, description: 'Professional performance media player.' },
       { name: 'Pioneer DDJ-1000', price: '$899', type: 'Controller', rent: false, description: 'Club-standard DJ controller with jog wheels.' },
       { name: 'Technics 1200', price: '$1,200', type: 'Turntable', rent: true, description: 'Iconic analog turntable for vinyl performances.' },
@@ -47,36 +75,42 @@ export default function Marketplace() {
   const rentTitle = content?.rentTitle || 'For Rent';
   const noRentText = content?.noRentText || 'No items available for rent right now.';
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 sm:py-20">
+    <div className="max-w-7xl mx-auto px-4 py-20">
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="mb-12 sm:mb-20 text-center"
+        className="mb-20 text-center"
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
           {content?.title || 'Marketplace'}
         </h1>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
           {content?.description || 'Buy and sell DJ accessories. Explore premium content and accessories.'}
         </p>
       </motion.section>
 
       <div className="mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4">{saleTitle}</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <h2 className="text-2xl font-bold mb-4">{saleTitle}</h2>
+        {productError && <p role="alert" className="mb-4 text-sm text-red-400">{productError}</p>}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {forSale.map((item, i) => (
             <motion.div
               key={`sale-${i}`}
               whileHover={{ y: -10 }}
-              className="p-3 sm:p-4 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
+              className="p-4 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
             >
-              <div className="h-32 sm:h-40 bg-black/50 rounded-lg mb-3 flex items-center justify-center">
-                <p className="text-xs sm:text-sm text-gray-400 text-center px-2">📦 {item.type}</p>
+              <div className="h-40 bg-black/50 rounded-lg mb-3 flex items-center justify-center">
+                <p className="text-gray-400">📦 {item.type}</p>
               </div>
-              <h3 className="font-bold mb-2 text-sm sm:text-base">{item.name}</h3>
-              <p className="text-purple-400 font-bold mb-3 text-sm">{item.price}</p>
+              <h3 className="font-bold mb-2">{item.name}</h3>
+              <p className="text-purple-400 font-bold mb-3">{item.price}</p>
               <div className="flex gap-2">
-                <button className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded text-xs sm:text-sm transition">Buy</button>
+                <a
+                  href={createInquiryHref(item, 'buy')}
+                  className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm text-center transition"
+                >
+                  Inquire to Buy
+                </a>
               </div>
             </motion.div>
           ))}
@@ -84,24 +118,29 @@ export default function Marketplace() {
       </div>
 
       <div className="mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4">{rentTitle}</h2>
+        <h2 className="text-2xl font-bold mb-4">{rentTitle}</h2>
         {forRent.length === 0 ? (
-          <p className="text-sm sm:text-base text-gray-400">{noRentText}</p>
+          <p className="text-gray-400">{noRentText}</p>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {forRent.map((item, i) => (
               <motion.div
                 key={`rent-${i}`}
                 whileHover={{ y: -10 }}
-                className="p-3 sm:p-4 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
+                className="p-4 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
               >
-                <div className="h-32 sm:h-40 bg-black/50 rounded-lg mb-3 flex items-center justify-center">
-                  <p className="text-xs sm:text-sm text-gray-400 text-center px-2">📦 {item.type}</p>
+                <div className="h-40 bg-black/50 rounded-lg mb-3 flex items-center justify-center">
+                  <p className="text-gray-400">📦 {item.type}</p>
                 </div>
-                <h3 className="font-bold mb-2 text-sm sm:text-base">{item.name}</h3>
-                <p className="text-purple-400 font-bold mb-3 text-sm">{item.price}</p>
+                <h3 className="font-bold mb-2">{item.name}</h3>
+                <p className="text-purple-400 font-bold mb-3">{item.price}</p>
                 <div className="flex gap-2">
-                  <button className="flex-1 px-3 py-2 border border-purple-600 hover:bg-purple-600/20 rounded text-xs sm:text-sm transition">Rent</button>
+                  <a
+                    href={createInquiryHref(item, 'rent')}
+                    className="flex-1 px-3 py-2 border border-purple-600 hover:bg-purple-600/20 rounded text-sm text-center transition"
+                  >
+                    Inquire to Rent
+                  </a>
                 </div>
               </motion.div>
             ))}

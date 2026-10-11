@@ -12,6 +12,11 @@ type Track = {
   src: string;
 };
 
+type MusicPoolContent = {
+  title?: string;
+  description?: string;
+};
+
 const sampleTracks: Track[] = [
   // Reggae
   { id: 'r1', title: 'Island Vibes', artist: 'Reggae Roots', bpm: 72, genre: 'Reggae', duration: '3:45', src: '/audio/reggae/Island-Vibes.mp3' },
@@ -53,11 +58,17 @@ export default function MusicPool() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   const tracks = useMemo(() => sampleTracks, []);
-  const [content, setContent] = useState<any>(null);
+  const [content, setContent] = useState<MusicPoolContent | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/page?slug=music-pool').then((r)=>r.ok? r.json().then(j=>setContent(j)) : null).catch(()=>{});
+    fetch('/api/admin/page?slug=music-pool')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((pageContent: MusicPoolContent | null) => {
+        if (pageContent) setContent(pageContent);
+      })
+      .catch(() => {});
   }, []);
+
   const [available, setAvailable] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -69,7 +80,7 @@ export default function MusicPool() {
           try {
             const res = await fetch(t.src, { method: 'HEAD' });
             results[t.id] = res.ok;
-          } catch (e) {
+          } catch {
             results[t.id] = false;
           }
         })

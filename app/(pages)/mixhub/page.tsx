@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 type Video = {
   id: string;
@@ -20,38 +21,40 @@ type MixHubContent = {
 };
 
 const sampleVideos: Video[] = [
-  { id: 'v1', title: 'Deep House Sunset Mix', dj: 'DJ Wizzy', duration: '1:20:15', views: '120K', src: '/videos/sample1.mp4', thumb: '/images/thumb1.svg', genre: 'House' },
-  { id: 'v2', title: 'Late Night Tech House', dj: 'Luna', duration: '58:12', views: '84K', src: '/videos/sample2.mp4', thumb: '/images/thumb2.svg', genre: 'Tech House' },
-  { id: 'v3', title: 'Hip-Hop Essentials', dj: 'MC Flow', duration: '45:03', views: '56K', src: '/videos/sample3.mp4', thumb: '/images/thumb3.svg', genre: 'Hip-Hop' },
-  { id: 'v4', title: 'Trap Bangers Vol.1', dj: '808 King', duration: '35:20', views: '98K', src: '/videos/sample4.mp4', thumb: '/images/thumb4.svg', genre: 'Trap' },
-  { id: 'v5', title: 'Chillout Lounge', dj: 'Nocturne', duration: '1:02:10', views: '34K', src: '/videos/sample5.mp4', thumb: '/images/thumb5.svg', genre: 'Chill' },
+  { id: 'v1', title: 'Deep House Sunset Mix', dj: 'DJ Wizzy', duration: '1:20:15', views: '120K', src: '', thumb: '/images/thumb1.svg', genre: 'House' },
+  { id: 'v2', title: 'Late Night Tech House', dj: 'Luna', duration: '58:12', views: '84K', src: '', thumb: '/images/thumb2.svg', genre: 'Tech House' },
+  { id: 'v3', title: 'Hip-Hop Essentials', dj: 'MC Flow', duration: '45:03', views: '56K', src: '', thumb: '/images/thumb3.svg', genre: 'Hip-Hop' },
+  { id: 'v4', title: 'Trap Bangers Vol.1', dj: '808 King', duration: '35:20', views: '98K', src: '', thumb: '/images/thumb4.svg', genre: 'Trap' },
+  { id: 'v5', title: 'Chillout Lounge', dj: 'Nocturne', duration: '1:02:10', views: '34K', src: '', thumb: '/images/thumb5.svg', genre: 'Chill' },
 ];
 
 export default function MixHub() {
   const [content, setContent] = useState<MixHubContent | null>(null);
   const videoList: Video[] = content?.videos?.length ? content.videos : sampleVideos;
-  const [selected, setSelected] = useState<Video>(sampleVideos[0]);
+  const [selectedId, setSelectedId] = useState(sampleVideos[0].id);
+  const selected = videoList.find((video) => video.id === selectedId) ?? videoList[0];
 
   useEffect(() => {
     fetch('/api/admin/page?slug=mixhub').then((r)=>r.ok? r.json().then(j=>setContent(j)) : null).catch(()=>{});
   }, []);
 
-  useEffect(() => {
-    if (content?.videos?.length) {
-      setSelected(content.videos[0]);
-    }
-  }, [content]);
+  const [videoStatus, setVideoStatus] = useState<{ src: string; available: boolean } | null>(null);
+  const videoAvailable = selected.src
+    ? videoStatus?.src === selected.src
+      ? videoStatus.available
+      : null
+    : false;
 
-  const [videoAvailable, setVideoAvailable] = useState(true);
-
   useEffect(() => {
+    if (!selected.src) return;
+
     let mounted = true;
     async function check() {
       try {
         const res = await fetch(selected.src, { method: 'HEAD' });
-        if (mounted) setVideoAvailable(res.ok);
-      } catch (e) {
-        if (mounted) setVideoAvailable(false);
+        if (mounted) setVideoStatus({ src: selected.src, available: res.ok });
+      } catch {
+        if (mounted) setVideoStatus({ src: selected.src, available: false });
       }
     }
     check();
@@ -74,12 +77,15 @@ export default function MixHub() {
         {/* Main player area */}
         <main className="flex-1">
             <div className="bg-black/80 rounded-lg overflow-hidden relative" role="region" aria-label="Video player">
-            <video key={selected.id} controls src={selected.src} className="w-full h-[480px] bg-black object-cover" aria-label={`Player for ${selected.title}`} />
-            {!videoAvailable && (
+            {videoAvailable ? (
+              <video key={selected.id} controls src={selected.src} className="w-full h-[480px] bg-black object-cover" aria-label={`Player for ${selected.title}`} />
+            ) : (
               <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-center p-4">
                 <div>
-                  <p className="text-white font-semibold">Video file missing</p>
-                  <p className="text-sm text-gray-300">This is a placeholder entry. Add the video file to /public/videos/ to enable playback.</p>
+                  <p className="text-white font-semibold">{videoAvailable === false ? 'Video file missing' : 'Checking video availability...'}</p>
+                  {videoAvailable === false && (
+                    <p className="text-sm text-gray-300">This is a placeholder entry. Add the video file to /public/videos/ to enable playback.</p>
+                  )}
                 </div>
               </div>
             )}
@@ -129,9 +135,9 @@ export default function MixHub() {
               <h4 className="font-semibold mb-3">Up Next</h4>
               <div className="space-y-3">
                 {videoList.map((video) => (
-                  <div key={video.id} onClick={() => setSelected(video)} className="flex items-center gap-3 cursor-pointer hover:bg-black/40 p-2 rounded">
-                      <div className="w-36 h-20 bg-black/50 rounded overflow-hidden flex-shrink-0" aria-hidden="true">
-                      <img src={video.thumb} alt={video.title} className="w-full h-full object-cover" />
+                  <div key={video.id} onClick={() => setSelectedId(video.id)} className="flex items-center gap-3 cursor-pointer hover:bg-black/40 p-2 rounded">
+                      <div className="relative w-36 h-20 bg-black/50 rounded overflow-hidden flex-shrink-0" aria-hidden="true">
+                      <Image src={video.thumb} alt={video.title} fill sizes="144px" className="object-cover" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{video.title}</p>

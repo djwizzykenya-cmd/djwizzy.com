@@ -6,7 +6,7 @@
     "I'm a passionate DJ with over 10 years of experience in the industry. Starting from small clubs to major festivals, I've developed a unique style that blends electronic, hip-hop, and house music.",
     "My mission is to create unforgettable experiences through music and help other DJs succeed in their careers."
   ],
-  "heroImage": "/images/about-hero.jpg",
+  "heroImage": "/images/about-hero.svg",
   "portfolioTitle": "Past Events & Gallery",
   "portfolioItems": [
     { "title": "Festival Takeover", "subtitle": "Main stage headline set", "rating": "5.0/5", "link": "/events/festival" },

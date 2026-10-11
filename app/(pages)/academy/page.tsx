@@ -43,8 +43,20 @@ export default function Academy() {
   ];
 
   const [content, setContent] = useState<AcademyContent | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('All levels');
   const courses = content?.courses ?? defaultCourses;
   const events = content?.events ?? defaultEvents;
+  const filteredCourses = courses.filter((course) => {
+    const query = searchQuery.trim().toLowerCase();
+    const matchesQuery = !query || [course.title, course.instructor, course.level]
+      .some((value) => value.toLowerCase().includes(query));
+    const matchesLevel = selectedLevel === 'All levels'
+      || course.level === 'All'
+      || course.level === selectedLevel;
+
+    return matchesQuery && matchesLevel;
+  });
 
   useEffect(() => {
     fetch('/api/admin/page?slug=academy').then((r) => r.ok ? r.json().then(j => setContent(j)) : null).catch(() => {});
@@ -66,18 +78,30 @@ export default function Academy() {
               <p className="text-sm text-gray-400">Structured lessons for all levels.</p>
             </div>
             <div className="flex items-center gap-3">
-              <input placeholder="Search courses..." className="px-3 py-2 bg-black/40 rounded text-sm" />
-              <select className="px-3 py-2 bg-black/40 rounded text-sm">
-                <option>All levels</option>
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
+              <input
+                type="search"
+                placeholder="Search courses..."
+                aria-label="Search courses"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="px-3 py-2 bg-black/40 rounded text-sm"
+              />
+              <select
+                aria-label="Filter courses by level"
+                value={selectedLevel}
+                onChange={(event) => setSelectedLevel(event.target.value)}
+                className="px-3 py-2 bg-black/40 rounded text-sm"
+              >
+                <option value="All levels">All levels</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
               </select>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <div key={course.id} className="p-5 rounded-lg bg-gradient-to-br from-purple-600/10 to-pink-600/5 border border-purple-500/10">
                 <div className="flex items-start justify-between">
                   <div>
@@ -93,6 +117,11 @@ export default function Academy() {
               </div>
             ))}
           </div>
+          {filteredCourses.length === 0 && (
+            <p className="mt-6 text-sm text-gray-400" role="status">
+              No courses match your search and level filters.
+            </p>
+          )}
         </main>
 
         {/* Sidebar: Events + CTA */}
@@ -115,7 +144,12 @@ export default function Academy() {
           <div className="p-4 rounded-lg bg-gradient-to-br from-purple-600/10 to-pink-600/5 border border-purple-500/10">
             <h3 className="font-semibold mb-2">Become an Instructor</h3>
             <p className="text-sm text-gray-400 mb-4">Share your knowledge, host workshops, and earn from students.</p>
-            <button className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded">Apply to Teach</button>
+            <a
+              href="mailto:contact@djplatform.com?subject=DJ%20Academy%20Instructor%20Application"
+              className="block w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded text-center"
+            >
+              Apply to Teach
+            </a>
           </div>
         </aside>
       </div>

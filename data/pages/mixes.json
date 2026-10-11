@@ -1,0 +1,76 @@
+{
+  "mixes": [
+    {
+      "title": "Amapiano Afrobeats Mix DJ WIZZY Ft Asake, Davido, Shallipopi, Olomide,Tiwa savage",
+      "artist": "DJ Wizzy",
+      "duration": "1h 23m",
+      "date": "2 weeks ago",
+      "videoUrl": "https://youtu.be/ZYBDTwQMMyk?si=lDOlLUq6WPT__RC6",
+      "thumbnail": "",
+      "description": "A vibrant blend of Amapiano and Afrobeats featuring top artists.",
+      "tags": ["Afrobeats", "Amapiano"],
+      "links": [
+        {
+          "label": "Watch on YouTube",
+          "href": "https://youtu.be/ZYBDTwQMMyk?si=lDOlLUq6WPT__RC6"
+        },
+        {
+          "label": "Listen on SoundCloud",
+          "href": "https://soundcloud.com/"
+        },
+        {
+          "label": "Open Mixcloud",
+          "href": "https://www.mixcloud.com/"
+        }
+      ]
+    },
+    {
+      "title": "BEST OF | RAP | TRAP | HIPHOP MIX 2025 BY DJWIZZY FT- juice WRLD,LIL BABY,J COLE,GUNNA,QUAVO,DABABY",
+      "artist": "DJ Wizzy",
+      "duration": "95m",
+      "date": "1 year ago",
+      "videoUrl": "https://youtu.be/4_Prw-N8pKM?si=08SzyhmLZRilwI5X",
+      "thumbnail": "https://img.youtube.com/vi/4_Prw-N8pKM/hqdefault.jpg",
+      "description": "Epic collection of Rap, Trap, and HipHop hits.",
+      "tags": ["Rap", "Trap", "HipHop"],
+      "links": [
+        {
+          "label": "Watch on YouTube",
+          "href": "https://youtu.be/4_Prw-N8pKM?si=08SzyhmLZRilwI5X"
+        },
+        {
+          "label": "Stream on SoundCloud",
+          "href": "https://soundcloud.com/"
+        },
+        {
+          "label": "Open Mixcloud",
+          "href": "https://www.mixcloud.com/"
+        }
+      ]
+    },
+    {
+      "title": "Reggae Roots Mix DJ WIZZY Ft Alpha Blondy, Bob Marley, Peter Tosh, Jimmy Cliff, UB40,Morgan Heritage",
+      "artist": "DJ Wizzy",
+      "duration": "1h 45m",
+      "date": "1 month ago",
+      "videoUrl": "https://youtu.be/jZlzenFUQx8?si=lZwSP3mMByO3-81Y",
+      "thumbnail": "",
+      "description": "Classic Reggae legends and roots vibes.",
+      "tags": ["Reggae", "Roots"],
+      "links": [
+        {
+          "label": "Watch on YouTube",
+          "href": "https://youtu.be/jZlzenFUQx8?si=lZwSP3mMByO3-81Y"
+        },
+        {
+          "label": "Listen on Mixcloud",
+          "href": "https://www.mixcloud.com/"
+        },
+        {
+          "label": "Stream on SoundCloud",
+          "href": "https://soundcloud.com/"
+        }
+      ]
+    }
+  ]
+}

@@ -2,33 +2,47 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import AdminProductsEditor from '../components/AdminProductsEditor';
 
-const PAGES = ['home', 'about', 'marketplace', 'mixhub', 'music-pool', 'academy', 'services'];
+const PAGES = ['home', 'about', 'marketplace', 'mixes', 'mixhub', 'music-pool', 'academy', 'services'];
+type PageContent = Record<string, unknown>;
 
 export default function AdminPanel() {
-  const { user } = useAuth();
+  const { user, ready, getAccessToken } = useAuth();
   const [selected, setSelected] = useState<string | null>(null);
-  const [content, setContent] = useState<any>(null);
+  const [newSlug, setNewSlug] = useState('');
   const [jsonText, setJsonText] = useState('');
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
+  const [section, setSection] = useState<'pages' | 'products'>('pages');
 
   useEffect(() => {
-    if (selected) fetchPage(selected);
+    if (selected) void fetchPage(selected);
   }, [selected]);
 
+  async function adminRequest(input: RequestInfo | URL, init?: RequestInit) {
+    const token = await getAccessToken();
+    const headers = new Headers(init?.headers);
+    headers.set('Authorization', `Bearer ${token}`);
+    return fetch(input, { ...init, headers, cache: 'no-store' });
+  }
+
   async function fetchPage(slug: string) {
-    setStatus('loading');
+    setStatus('Loading…');
     setError('');
-    const res = await fetch(`/api/admin/page?slug=${slug}`);
-    if (res.ok) {
-      const json = await res.json();
-      setContent(json);
-      setJsonText(JSON.stringify(json, null, 2));
-      setStatus('');
-    } else {
-      setContent({ title: '', description: '' });
-      setJsonText(JSON.stringify({ title: '', description: '' }, null, 2));
+    try {
+      const response = await fetch(`/api/admin/page?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+      if (response.status === 404) {
+        setJsonText(JSON.stringify({ title: '', description: '' }, null, 2));
+        setStatus('New page — save to create it.');
+        return;
+      }
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not load page content.');
+      setJsonText(JSON.stringify(result, null, 2));
+      setStatus('Loaded');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not load page content.');
       setStatus('');
     }
   }
@@ -36,107 +50,139 @@ export default function AdminPanel() {
   async function save() {
     if (!selected) return;
     try {
-      const parsed = JSON.parse(jsonText);
-      setStatus('saving');
-      setError('');
-      const res = await fetch('/api/admin/page', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: selected, content: parsed }) });
-      if (res.ok) {
-        setContent(parsed);
-        setStatus('saved');
-      } else {
-        setStatus('error');
+      const content = JSON.parse(jsonText) as PageContent;
+      if (!content || typeof content !== 'object' || Array.isArray(content)) {
+        throw new Error('Page content must be a JSON object.');
       }
-    } catch (err) {
-      setError('Invalid JSON. Fix syntax before saving.');
-      setStatus('error');
-    }
-  }
-
-  function applyPreview() {
-    try {
-      const parsed = JSON.parse(jsonText);
-      setContent(parsed);
+      setStatus('Saving…');
       setError('');
-      setStatus('preview');
-      setTimeout(() => {
-        setStatus((prev) => (prev === 'preview' ? '' : prev));
-      }, 1200);
-    } catch (err) {
-      setError('Invalid JSON. Fix syntax before preview.');
-      setStatus('error');
+      const response = await adminRequest('/api/admin/page', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: selected, content }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not save content.');
+      setStatus('Saved successfully');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not save content.');
+      setStatus('Error');
     }
   }
 
-  if (!user || user.name.toLowerCase() !== 'admin') {
-    return <div className="p-8">Access denied. Log in as <strong>admin</strong>.</div>;
+  async function deletePage() {
+    if (!selected || !window.confirm(`Delete the "${selected}" page content?`)) return;
+
+    try {
+      setStatus('Deleting…');
+      setError('');
+      const response = await adminRequest(`/api/admin/page?slug=${encodeURIComponent(selected)}`, {
+        method: 'DELETE',
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not delete page content.');
+      setSelected(null);
+      setJsonText('');
+      setStatus('Page content deleted.');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not delete page content.');
+      setStatus('Error');
+    }
   }
+
+  function createPage(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const slug = newSlug.trim().toLowerCase();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      setError('Use lowercase letters, numbers, and single hyphens for the page slug.');
+      return;
+    }
+    setNewSlug('');
+    setSelected(slug);
+  }
+
+  if (!ready) return <div className="p-8">Loading authentication…</div>;
+  if (!user) return <div className="p-8">Sign in to access the admin panel.</div>;
+  if (!user.isAdmin) return <div className="p-8">Administrator access required.</div>;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
-      <div className="md:flex gap-6">
-        <aside className="w-48">
-          <ul className="space-y-2">
-            {PAGES.map((p) => (
-              <li key={p}>
-                <button onClick={() => setSelected(p)} className={`w-full text-left px-3 py-2 rounded ${selected === p ? 'bg-purple-600 text-white' : 'hover:bg-black/40'}`}>
-                  {p}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
-
-        <main className="flex-1">
-          {!selected && <p>Select a page to edit.</p>}
-
-          {selected && (
-            <div className="space-y-4">
-              <div className="flex flex-col gap-3 mb-4">
-                <h2 className="font-semibold text-xl">Editing: {selected}</h2>
-                <p className="text-sm text-gray-400">You can edit fields directly or update the page JSON below.</p>
-              </div>
-
-              <div className="grid md:grid-cols-[1fr_1fr] gap-6">
-                <div className="space-y-3">
-                  <label className="block text-sm text-gray-300">Title</label>
-                  <input className="w-full px-3 py-2 bg-black/40 rounded" value={content?.title || ''} onChange={(e) => {
-                    const next = { ...content, title: e.target.value };
-                    setContent(next);
-                    setJsonText(JSON.stringify(next, null, 2));
-                  }} />
-
-                  <label className="block text-sm text-gray-300">Description</label>
-                  <textarea className="w-full px-3 py-2 bg-black/40 rounded" rows={4} value={content?.description || ''} onChange={(e) => {
-                    const next = { ...content, description: e.target.value };
-                    setContent(next);
-                    setJsonText(JSON.stringify(next, null, 2));
-                  }} />
-
-                  <div className="flex flex-wrap gap-3">
-                    <button onClick={save} className="px-4 py-2 bg-purple-600 rounded text-white">Save JSON</button>
-                    <button type="button" onClick={applyPreview} className="px-4 py-2 bg-gray-800 rounded text-white">Preview JSON</button>
-                  </div>
-                  {status && <p className="text-sm text-gray-400">{status}</p>}
-                  {error && <p className="text-sm text-red-400">{error}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm text-gray-300 mb-2">Page JSON</label>
-                  <textarea
-                    className="w-full h-[420px] p-3 bg-black/40 rounded text-xs font-mono"
-                    value={jsonText}
-                    onChange={(e) => {
-                      setJsonText(e.target.value);
-                      setError('');
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
+      <div className="mb-6 flex gap-3">
+        <button
+          type="button"
+          onClick={() => setSection('pages')}
+          className={`rounded px-4 py-2 ${section === 'pages' ? 'bg-purple-600' : 'bg-white/10'}`}
+        >
+          Page content
+        </button>
+        <button
+          type="button"
+          onClick={() => setSection('products')}
+          className={`rounded px-4 py-2 ${section === 'products' ? 'bg-purple-600' : 'bg-white/10'}`}
+        >
+          Products
+        </button>
       </div>
+
+      {section === 'products' ? <AdminProductsEditor /> : (
+        <div className="md:flex gap-6">
+          <aside className="w-full md:w-56 shrink-0">
+            <ul className="space-y-2 mb-5">
+              {PAGES.map((slug) => (
+                <li key={slug}>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(slug)}
+                    className={`w-full text-left px-3 py-2 rounded ${selected === slug ? 'bg-purple-600 text-white' : 'hover:bg-black/40'}`}
+                  >
+                    {slug}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <form onSubmit={createPage} className="space-y-2">
+              <label htmlFor="new-page-slug" className="block text-sm text-gray-300">Create page</label>
+              <input
+                id="new-page-slug"
+                value={newSlug}
+                onChange={(event) => setNewSlug(event.target.value)}
+                placeholder="page-slug"
+                className="w-full rounded bg-black/40 px-3 py-2"
+              />
+              <button type="submit" className="w-full rounded bg-white/10 px-3 py-2">New page</button>
+            </form>
+          </aside>
+
+          <main className="flex-1">
+            {!selected && <p>Select a page to edit or create one.</p>}
+            {selected && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-semibold text-xl">Editing: {selected}</h2>
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => void fetchPage(selected)} className="rounded bg-gray-800 px-4 py-2">Reload</button>
+                    <button type="button" onClick={() => void deletePage()} className="rounded bg-red-800 px-4 py-2">Delete page</button>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400">Update the page’s JSON content. Changes are saved to Supabase.</p>
+                <textarea
+                  aria-label="Page JSON"
+                  className="w-full h-[520px] p-3 bg-black/40 rounded text-xs font-mono"
+                  value={jsonText}
+                  onChange={(event) => setJsonText(event.target.value)}
+                  spellCheck={false}
+                />
+                <button type="button" onClick={() => void save()} className="rounded bg-purple-600 px-4 py-2 text-white">
+                  Save JSON
+                </button>
+                {status && <p role="status" className="text-sm text-gray-300">{status}</p>}
+                {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
+              </div>
+            )}
+          </main>
+        </div>
+      )}
     </div>
   );
 }

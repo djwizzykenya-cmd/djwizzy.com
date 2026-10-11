@@ -4,19 +4,42 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+type ServiceCard = {
+  title: string;
+  desc: string;
+  price: string;
+  href?: string;
+  buttonText?: string;
+};
+
+type ContactField = {
+  type: string;
+  placeholder: string;
+};
+
+type ServicesContent = {
+  title: string;
+  description: string;
+  cards: ServiceCard[];
+  contactTitle: string;
+  contactDescription: string;
+  contactFields: ContactField[];
+  contactButtonText: string;
+};
+
 export default function Services() {
-  const [content, setContent] = useState<any>(null);
+  const [content, setContent] = useState<ServicesContent | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/page?slug=services')
       .then((res) => (res.ok ? res.json() : null))
       .then((json) => {
-        if (json) setContent(json);
+        if (json) setContent(json as ServicesContent);
       })
       .catch(() => null);
   }, []);
 
-  const page = content || {
+  const defaultPage: ServicesContent = {
     title: 'My Services',
     description: "From live DJ sets to custom mixes and more. Let's create something amazing together.",
     cards: [
@@ -74,6 +97,13 @@ export default function Services() {
     contactButtonText: 'Send Booking Request',
   };
 
+  const page: ServicesContent = {
+    ...defaultPage,
+    ...content,
+    cards: Array.isArray(content?.cards) ? content.cards : defaultPage.cards,
+    contactFields: Array.isArray(content?.contactFields) ? content.contactFields : defaultPage.contactFields,
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-20" role="main">
       <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-20 text-center">
@@ -83,15 +113,15 @@ export default function Services() {
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">{page.description}</p>
       </motion.section>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-12 sm:mb-20 px-4">
-        {(page.cards || []).map((service: any, i: number) => (
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        {page.cards.map((service, i) => (
           <motion.div
             key={i}
             whileHover={{ y: -10 }}
-            className="p-4 sm:p-6 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
+            className="p-6 rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/30 hover:border-purple-500 transition"
           >
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3">{service.title}</h3>
-            <p className="text-sm sm:text-base text-gray-300 mb-4">{service.desc}</p>
+            <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
+            <p className="text-gray-300 mb-4">{service.desc}</p>
             <div className="flex items-center justify-between">
               <span className="text-purple-400 font-bold">{service.price}</span>
               {service.href ? (
@@ -112,7 +142,7 @@ export default function Services() {
         <h2 className="text-3xl font-bold mb-8 text-center">{page.contactTitle}</h2>
         <p className="text-gray-300 text-center mb-8">{page.contactDescription}</p>
         <form className="max-w-2xl mx-auto space-y-4">
-          {(page.contactFields || []).map((field: any, index: number) => {
+          {page.contactFields.map((field, index) => {
             if (field.type === 'textarea') {
               return (
                 <textarea
