@@ -19,6 +19,14 @@ type Product = {
 };
 
 type ProductForm = Omit<Product, 'id' | 'vendors'> & { id?: string };
+type ProductFilter = 'all' | Product['status'];
+
+const PRODUCT_FILTERS: { value: ProductFilter; label: string }[] = [
+  { value: 'all', label: 'All products' },
+  { value: 'published', label: 'Published' },
+  { value: 'draft', label: 'Drafts' },
+  { value: 'archived', label: 'Archived' },
+];
 
 const emptyProduct: ProductForm = {
   vendor_id: '',
@@ -41,6 +49,9 @@ export default function AdminProductsEditor() {
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<ProductFilter>('all');
 
   const adminFetch = useCallback(async (url: string, init?: RequestInit) => {
     const token = await getAccessToken();
@@ -67,6 +78,7 @@ export default function AdminProductsEditor() {
   }, [adminFetch]);
 
   const load = useCallback(async () => {
+    setLoading(true);
     try {
       const data = await fetchData();
       setProducts(data.products);
@@ -75,6 +87,8 @@ export default function AdminProductsEditor() {
       setStatus('');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not load marketplace data.');
+    } finally {
+      setLoading(false);
     }
   }, [fetchData]);
 
@@ -90,11 +104,30 @@ export default function AdminProductsEditor() {
       .catch((cause: unknown) => {
         if (!active) return;
         setError(cause instanceof Error ? cause.message : 'Could not load marketplace data.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
   }, [fetchData]);
+
+  const productCounts = products.reduce<Record<ProductFilter, number>>((counts, product) => {
+    counts.all += 1;
+    counts[product.status] += 1;
+    return counts;
+  }, { all: 0, published: 0, draft: 0, archived: 0 });
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    const matchesFilter = filter === 'all' || product.status === filter;
+    const matchesSearch = !normalizedSearch || [
+      product.name,
+      product.category,
+      product.vendors?.name ?? '',
+    ].some((value) => value.toLowerCase().includes(normalizedSearch));
+    return matchesFilter && matchesSearch;
+  });
 
   function editProduct(product: Product) {
     setForm({
@@ -165,7 +198,9 @@ export default function AdminProductsEditor() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">Inventory</p>
             <h2 className="mt-1.5 text-xl font-bold text-white">Marketplace products</h2>
-            <p className="mt-1 text-sm text-gray-400">{products.length} {products.length === 1 ? 'listing' : 'listings'} in your catalog</p>
+            <p className="mt-1 text-sm text-gray-400">
+              {loading ? 'Syncing your catalog…' : `${products.length} ${products.length === 1 ? 'listing' : 'listings'} in your catalog`}
+            </p>
           </div>
           <button
             type="button"
@@ -186,13 +221,63 @@ export default function AdminProductsEditor() {
           {status && (
             <p role="status" className="rounded-xl border border-emerald-400/20 bg-emerald-500/[0.07] px-4 py-3 text-sm text-emerald-200">{status}</p>
           )}
-          {products.length === 0 ? (
+          {!loading && products.length > 0 && (
+            <div className="space-y-3 pb-1">
+              <label className="relative block">
+                <span className="sr-only">Search products</span>
+                <span aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-500">⌕</span>
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search products, categories, or vendors"
+                  className="min-h-11 w-full rounded-xl border border-white/[0.08] bg-black/20 py-2.5 pl-10 pr-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/10"
+                />
+              </label>
+              <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter products by status">
+                {PRODUCT_FILTERS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setFilter(option.value)}
+                    aria-pressed={filter === option.value}
+                    className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                      filter === option.value
+                        ? 'border-violet-400/25 bg-violet-500/10 text-violet-100'
+                        : 'border-white/[0.07] bg-white/[0.02] text-gray-400 hover:bg-white/[0.06] hover:text-gray-200'
+                    }`}
+                  >
+                    {option.label}
+                    <span className={`rounded-md px-1.5 py-0.5 text-[10px] ${filter === option.value ? 'bg-violet-400/15 text-violet-100' : 'bg-white/[0.06] text-gray-500'}`}>
+                      {productCounts[option.value]}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {loading ? (
+            <div className="space-y-3" aria-label="Loading products" role="status">
+              {[0, 1, 2].map((item) => (
+                <div key={item} className="h-[104px] animate-pulse rounded-xl border border-white/[0.06] bg-white/[0.025]" />
+              ))}
+            </div>
+          ) : products.length === 0 ? (
             <div className="flex min-h-52 flex-col items-center justify-center rounded-xl border border-dashed border-white/10 px-5 text-center">
               <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.05] text-xl text-gray-400">◇</span>
               <h3 className="font-semibold text-white">No products yet</h3>
               <p className="mt-1 max-w-xs text-sm leading-6 text-gray-400">Create your first listing to add it to the marketplace catalog.</p>
             </div>
-          ) : products.map((product) => (
+          ) : filteredProducts.length === 0 ? (
+            <div className="flex min-h-48 flex-col items-center justify-center rounded-xl border border-dashed border-white/10 px-5 text-center">
+              <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.05] text-xl text-gray-400">⌕</span>
+              <h3 className="font-semibold text-white">No matching products</h3>
+              <p className="mt-1 max-w-xs text-sm leading-6 text-gray-400">Try another search or status filter.</p>
+              <button type="button" onClick={() => { setSearch(''); setFilter('all'); }} className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-gray-200 transition hover:bg-white/[0.08]">
+                Clear filters
+              </button>
+            </div>
+          ) : filteredProducts.map((product) => (
             <article key={product.id} className="group rounded-xl border border-white/[0.07] bg-white/[0.025] p-4 transition hover:border-white/[0.13] hover:bg-white/[0.04]">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex min-w-0 items-start gap-3">
@@ -201,6 +286,9 @@ export default function AdminProductsEditor() {
                     <h3 className="truncate font-semibold text-white">{product.name}</h3>
                     <p className="mt-1 truncate text-sm text-gray-400">{product.vendors?.name ?? 'Vendor'} · {product.category}</p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-200">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currency, maximumFractionDigits: 2 }).format(Number(product.price))}
+                      </span>
                       <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize ${
                         product.status === 'published'
                           ? 'bg-emerald-400/10 text-emerald-200'
