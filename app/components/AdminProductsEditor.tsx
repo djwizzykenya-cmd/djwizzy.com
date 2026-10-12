@@ -159,85 +159,120 @@ export default function AdminProductsEditor() {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <section className="space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-xl font-semibold">Marketplace products</h2>
+    <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] xl:gap-6">
+      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111118]/85 shadow-xl shadow-black/20">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.07] p-5 sm:p-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-300">Inventory</p>
+            <h2 className="mt-1.5 text-xl font-bold text-white">Marketplace products</h2>
+            <p className="mt-1 text-sm text-gray-400">{products.length} {products.length === 1 ? 'listing' : 'listings'} in your catalog</p>
+          </div>
           <button
             type="button"
             onClick={() => {
               setForm({ ...emptyProduct, vendor_id: vendors[0]?.id ?? '' });
               setImageUrls('');
             }}
-            className="rounded bg-white/10 px-3 py-2"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-950/25 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
           >
+            <span aria-hidden="true" className="text-lg leading-none">+</span>
             New product
           </button>
         </div>
-        {products.length === 0 && <p className="text-sm text-gray-400">No products found.</p>}
-        {products.map((product) => (
-          <article key={product.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-white/10 p-4">
-            <div>
-              <h3 className="font-semibold">{product.name}</h3>
-              <p className="text-sm text-gray-400">
-                {product.vendors?.name ?? 'Vendor'} · {product.status} · {product.is_rental ? 'Rental' : 'Sale'}
-              </p>
+        <div className="space-y-3 p-4 sm:p-5">
+          {error && (
+            <p role="alert" className="rounded-xl border border-red-400/20 bg-red-500/[0.08] px-4 py-3 text-sm text-red-200">{error}</p>
+          )}
+          {status && (
+            <p role="status" className="rounded-xl border border-emerald-400/20 bg-emerald-500/[0.07] px-4 py-3 text-sm text-emerald-200">{status}</p>
+          )}
+          {products.length === 0 ? (
+            <div className="flex min-h-52 flex-col items-center justify-center rounded-xl border border-dashed border-white/10 px-5 text-center">
+              <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.05] text-xl text-gray-400">◇</span>
+              <h3 className="font-semibold text-white">No products yet</h3>
+              <p className="mt-1 max-w-xs text-sm leading-6 text-gray-400">Create your first listing to add it to the marketplace catalog.</p>
             </div>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => editProduct(product)} className="rounded bg-white/10 px-3 py-2">Edit</button>
-              <button type="button" onClick={() => void deleteProduct(product.id)} className="rounded bg-red-800 px-3 py-2">Delete</button>
-            </div>
-          </article>
-        ))}
+          ) : products.map((product) => (
+            <article key={product.id} className="group rounded-xl border border-white/[0.07] bg-white/[0.025] p-4 transition hover:border-white/[0.13] hover:bg-white/[0.04]">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-fuchsia-300/10 bg-fuchsia-400/[0.07] text-lg text-fuchsia-200">◇</span>
+                  <div className="min-w-0">
+                    <h3 className="truncate font-semibold text-white">{product.name}</h3>
+                    <p className="mt-1 truncate text-sm text-gray-400">{product.vendors?.name ?? 'Vendor'} · {product.category}</p>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize ${
+                        product.status === 'published'
+                          ? 'bg-emerald-400/10 text-emerald-200'
+                          : product.status === 'archived'
+                            ? 'bg-gray-400/10 text-gray-300'
+                            : 'bg-amber-300/10 text-amber-200'
+                      }`}>{product.status}</span>
+                      <span className="rounded-full border border-white/[0.08] px-2.5 py-1 text-[11px] text-gray-400">{product.is_rental ? 'Rental' : 'For sale'}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button type="button" onClick={() => editProduct(product)} className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-gray-200 transition hover:bg-white/10">Edit</button>
+                  <button type="button" onClick={() => void deleteProduct(product.id)} className="rounded-lg border border-red-400/15 bg-red-500/[0.06] px-3 py-2 text-xs font-semibold text-red-200 transition hover:border-red-400/30 hover:bg-red-500/[0.12]">Delete</button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
-      <form onSubmit={save} className="space-y-4 rounded border border-purple-500/30 bg-black/30 p-5">
-        <h2 className="text-xl font-semibold">{form.id ? 'Edit product' : 'Create product'}</h2>
+      <form onSubmit={save} className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#111118]/85 p-5 shadow-xl shadow-black/20 sm:p-6">
+        <div className="border-b border-white/[0.07] pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">Product details</p>
+          <h2 className="mt-1.5 text-xl font-bold text-white">{form.id ? 'Edit product' : 'Create product'}</h2>
+          <p className="mt-1 text-sm text-gray-400">Add listing details and set its marketplace visibility.</p>
+        </div>
         {vendors.length === 0 ? (
-          <p className="text-sm text-yellow-300">Create or import an approved vendor before adding products.</p>
+          <p className="rounded-xl border border-amber-300/20 bg-amber-300/[0.06] px-4 py-3 text-sm leading-6 text-amber-100">Create or import an approved vendor before adding products.</p>
         ) : (
           <>
-            <label className="block text-sm text-gray-300">
+            <label className="block text-sm font-medium text-gray-300">
               Vendor
-              <select required value={form.vendor_id} onChange={(event) => setForm({ ...form, vendor_id: event.target.value })} className="mt-1 w-full rounded bg-gray-900 px-3 py-2">
+              <select required value={form.vendor_id} onChange={(event) => setForm({ ...form, vendor_id: event.target.value })} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15">
                 <option value="">Select vendor</option>
                 {vendors.map((vendor) => <option key={vendor.id} value={vendor.id}>{vendor.name} ({vendor.status})</option>)}
               </select>
             </label>
-            <label className="block text-sm text-gray-300">
+            <label className="block text-sm font-medium text-gray-300">
               Name
-              <input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+              <input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
             </label>
-            <label className="block text-sm text-gray-300">
+            <label className="block text-sm font-medium text-gray-300">
               Description
-              <textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+              <textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} rows={3} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              <label className="block text-sm text-gray-300">
+              <label className="block text-sm font-medium text-gray-300">
                 Price
-                <input required min="0" step="0.01" type="number" value={form.price} onChange={(event) => setForm({ ...form, price: Number(event.target.value) })} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+                <input required min="0" step="0.01" type="number" value={form.price} onChange={(event) => setForm({ ...form, price: Number(event.target.value) })} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
               </label>
-              <label className="block text-sm text-gray-300">
+              <label className="block text-sm font-medium text-gray-300">
                 Currency
-                <input required maxLength={3} pattern="[A-Z]{3}" value={form.currency} onChange={(event) => setForm({ ...form, currency: event.target.value.toUpperCase() })} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+                <input required maxLength={3} pattern="[A-Z]{3}" value={form.currency} onChange={(event) => setForm({ ...form, currency: event.target.value.toUpperCase() })} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
               </label>
             </div>
-            <label className="block text-sm text-gray-300">
+            <label className="block text-sm font-medium text-gray-300">
               Category
-              <input value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+              <input value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
             </label>
-            <label className="block text-sm text-gray-300">
+            <label className="block text-sm font-medium text-gray-300">
               Image URLs (one per line)
-              <textarea value={imageUrls} onChange={(event) => setImageUrls(event.target.value)} className="mt-1 w-full rounded bg-black/40 px-3 py-2" />
+              <textarea value={imageUrls} onChange={(event) => setImageUrls(event.target.value)} rows={3} placeholder="https://example.com/image.jpg" className="mt-2 w-full rounded-xl border border-white/10 bg-[#09090d] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-violet-400/50 focus:ring-2 focus:ring-violet-500/15" />
             </label>
-            <div className="flex flex-wrap items-center gap-4">
-              <label className="flex items-center gap-2 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-3">
+              <label className="flex items-center gap-2.5 text-sm text-gray-300">
                 <input type="checkbox" checked={form.is_rental} onChange={(event) => setForm({ ...form, is_rental: event.target.checked })} />
-                Rental
+                Available for rental
               </label>
-              <label className="flex items-center gap-2 text-sm">
-                Status
-                <select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as ProductForm['status'] })} className="rounded bg-gray-900 px-2 py-1">
+              <label className="flex items-center gap-2 text-sm text-gray-300">
+                <span>Status</span>
+                <select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as ProductForm['status'] })} className="rounded-lg border border-white/10 bg-[#09090d] px-2.5 py-1.5 text-sm text-white outline-none focus:border-violet-400/50">
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
                   <option value="archived">Archived</option>
@@ -245,15 +280,13 @@ export default function AdminProductsEditor() {
               </label>
             </div>
             <div className="flex gap-3">
-              <button type="submit" disabled={saving || vendors.length === 0} className="rounded bg-purple-600 px-4 py-2 disabled:opacity-60">
+              <button type="submit" disabled={saving || vendors.length === 0} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-950/25 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60">
                 {saving ? 'Saving…' : form.id ? 'Update product' : 'Create product'}
               </button>
-              {form.id && <button type="button" onClick={() => { setForm({ ...emptyProduct, vendor_id: vendors[0]?.id ?? '' }); setImageUrls(''); }} className="rounded bg-white/10 px-4 py-2">Cancel edit</button>}
+              {form.id && <button type="button" onClick={() => { setForm({ ...emptyProduct, vendor_id: vendors[0]?.id ?? '' }); setImageUrls(''); }} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-gray-200 transition hover:bg-white/[0.08]">Cancel</button>}
             </div>
           </>
         )}
-        {status && <p role="status" className="text-sm text-green-300">{status}</p>}
-        {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
       </form>
     </div>
   );
